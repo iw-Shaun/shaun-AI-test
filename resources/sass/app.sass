@@ -1,0 +1,42 @@
+@mixin fCenterAttributes( $justifyContent:initial, $alignItems:initial, $direction:row )
+  display: flex
+  align-items: $alignItems
+  justify-content: $justifyContent
+  flex-direction: $direction
+
+img
+  pointer-events: none
+  display: block
+  width: 100%
+  height: auto
+  aspect-ratio: attr(width) / attr(height)
+  object-fit: cover
+  object-position: top left
+
+.background
+  position: absolute
+  top: 0vw
+  width: 100%
+
+.first-page
+  +fCenterAttributes(flex-start, center, column)
+  position: relative
+  top: 10vw
+  width: 100vw
+  height: calc( 100vh - 10vw )
+  .upload
+    +fCenterAttributes(center, flex-start, column)
+    position: relative
+    z-index: 10
+    input
+      margin-bottom: 2vw 
+  .showcase
+    +fCenterAttributes(center, center)
+    position: relative
+    background: lightgray
+    z-index: 10
+    margin: 5vw
+    min-width: 32vw
+    max-width: 50vw
+    min-height: 48vw
+    border: solid 2px #bbbbbb
