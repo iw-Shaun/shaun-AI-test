@@ -29,6 +29,7 @@ Route::group(['prefix' => 'laravel-filemanager'], function () {
 Route::get('/auth', [UserController::class, 'auth']);
 Route::post('/login', [UserController::class, 'login']);
 Route::post('/store', [UserController::class, 'store']);
+Route::get('/getResponse/:id', [UserController::class, 'getResponse']);
 
 
 Route::get('/{path?}', [RootController::class, 'show'])->where('path', '.*');

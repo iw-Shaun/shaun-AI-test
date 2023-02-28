@@ -40,7 +40,7 @@ class ReplicateController extends Controller
             'base_uri' => $url,
             'timeout'  => HTTP_TIMEOUT,
             //verify false
-            'verify' => false
+            // 'verify' => false
         ]);
         $request = new Request($method, $api, $header, $body);
         
@@ -53,7 +53,7 @@ class ReplicateController extends Controller
             $json = json_decode($body, true);
             return $json;
         } catch (RequestException $e) {
-            Log::info("-----------------catch-----------------");
+            Log::info("-----------------catch-----------------{$e}");
             if ($e->hasResponse()) {
                 $res = $e->getResponse();
                 $code = $res->getStatusCode();
@@ -66,7 +66,13 @@ class ReplicateController extends Controller
 
     public static function getAI($photo)
     {
-        $res = self::sendRequest(self::METHOD_POST, '/v1/predictions/', ['photo' => $photo]);
+        $res = self::sendRequest(self::METHOD_POST, '/v1/predictions', ['photo' => $photo]);
+        return $res;
+    }
+
+    public static function getResponse($id)
+    {
+        $res = self::sendRequest(self::METHOD_GET, `/v1/predictions/$id`);
         return $res;
     }
 }

@@ -5,6 +5,7 @@ import UploadAndDisplayImage from '../hooks/UploadAndDisplayImage'
 const FileUpload = (props) => {
   // state to store the selected file.
   const [selectedFile, setSelectedFile] = useState(null);
+  const [responseId, setResponseId] = useState(null);
 
   useEffect(()=>{
     if(selectedFile){
@@ -15,6 +16,26 @@ const FileUpload = (props) => {
       return () => URL.revokeObjectURL(objectUrl)
     }
   },[selectedFile])
+
+  useEffect(()=>{
+    if(responseId) handleResponse()
+  },[responseId])
+
+  const handleResponse = async () => {
+    try {
+      // We will send formData object as a data to the API URL here.
+      const response = await axios.get(`/getResponse/${responseId}`)
+      .then((res) => {
+        if (res.data.output)
+          console.log("Successfully\n",res.data);
+        else
+          console.log("not yet\n",res.data);
+          setTimeout(() => handleResponse(), 1000);
+      });
+    } catch (error) {
+        console.log(error)
+    }
+  }
 
   const handleSubmit = async (event) => {
       event.preventDefault();
@@ -30,8 +51,10 @@ const FileUpload = (props) => {
           const response = await axios.post("/store", formData, {
               headers: {"Content-Type": "multipart/form-data"}
           }).then((res) => {
-            if(res.data)
+            if(res.data){
               console.log("File Uploaded Successfully\n",res.data);
+              setResponseId(res.data.id)
+            }
             else
               console.error("File Uploaded failed");
           });
