@@ -37,7 +37,7 @@ class ReplicateController extends Controller
             'base_uri' => $url,
             'timeout'  => HTTP_TIMEOUT,
             //verify false
-            // 'verify' => false
+            'verify' => false
         ]);
 
         Log::info(print_r(isset($data),1));
