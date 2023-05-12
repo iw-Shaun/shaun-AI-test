@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use GuzzleHttp\Client;
-use GuzzleHttp\Psr7\Request as Request;
+use GuzzleHttp\Psr7\Request as HttpRequest;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Exception\ConnectException;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Storage;
 
 const HTTP_TIMEOUT = 15;
 
@@ -17,24 +19,19 @@ class ReplicateController extends Controller
     const METHOD_POST = 'POST';
     const METHOD_DELETE = 'DELETE';
 
-    private static function sendRequest($method, $api, $data=[])
+    private static function sendRequest($method, $api, $data=null)
     {
         $url = 'https://api.replicate.com';
         $api = $url.$api;
 
-        Log::info(print_r($data,1));
         $accessToken = '1fcc38a273d858169d216d0db0df1741fddafb85';
 
         $header = [
             'Authorization' => "Token {$accessToken}",
         ];
-        $body = json_encode([
-            "version"=> "9222a21c181b707209ef12b5e0d7e94c994b58f01c7b2fec075d2e892362f13c",
-            "input"=> [
-                "image"=> $data['photo'],
-                "target_age"=> "10"
-            ]
-        ]);
+
+        if (isset($data))
+            $body = json_encode($data);
 
         $client = new Client([
             'base_uri' => $url,
@@ -42,7 +39,12 @@ class ReplicateController extends Controller
             //verify false
             // 'verify' => false
         ]);
-        $request = new Request($method, $api, $header, $body);
+
+        Log::info(print_r(isset($data),1));
+        if (isset($body))
+            $request = new HttpRequest($method, $api, $header, $body);
+        else
+            $request = new HttpRequest($method, $api, $header);
         
         try {
             Log::info('-----------------try-----------------');
@@ -51,6 +53,7 @@ class ReplicateController extends Controller
             $reason = $response->getReasonPhrase();
             $body = $response->getBody();
             $json = json_decode($body, true);
+            Log::info(print_r($response,1));
             return $json;
         } catch (RequestException $e) {
             Log::info("-----------------catch-----------------{$e}");
@@ -64,15 +67,17 @@ class ReplicateController extends Controller
         }
     }
 
-    public static function getAI($photo)
+    public static function getAI(Request $request)
     {
-        $res = self::sendRequest(self::METHOD_POST, '/v1/predictions', ['photo' => $photo]);
+        $data = $request->input('data');
+
+        $res = self::sendRequest(self::METHOD_POST, '/v1/predictions', $data);
         return $res;
     }
 
     public static function getResponse($id)
     {
-        $res = self::sendRequest(self::METHOD_GET, `/v1/predictions/$id`);
+        $res = self::sendRequest(self::METHOD_GET, "/v1/predictions/{$id}");
         return $res;
     }
 }

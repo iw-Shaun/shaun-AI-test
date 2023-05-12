@@ -200,9 +200,8 @@ class UserController extends Controller
                 $filename = Str::uuid() . '.' . $uploadedFile->getClientOriginalExtension();
                 Storage::disk('public')->putFileAs('uploadedFiles/', $uploadedFile, $filename);
                 
-                $photoURL = Storage::disk('public')->url('uploadedFiles/'.$filename);
-                $response = ReplicateController::getAI($photoURL);
-                return $response;
+                $photoUrl = Storage::disk('public')->url('uploadedFiles/'.$filename);
+                return $photoUrl;
             }
         }
         return false;

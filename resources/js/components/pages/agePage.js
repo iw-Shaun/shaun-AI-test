@@ -2,12 +2,11 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useHistory } from 'react-router-dom';
 import UploadAndDisplayImage from '../hooks/UploadAndDisplayImage'
 
-const defaultValue = 'animate girl'
-const defaultA_prompt = "2D, smile, best quality, extremely detailed"
+const defaultValue = 20
 
 const FileUpload = (props) => {
   // state to store the selected file.
-  const [selectedFile, setSelectedFile] = useState({input:null,prompt:defaultValue,a_prompt:defaultA_prompt});
+  const [selectedFile, setSelectedFile] = useState({input:null,age:defaultValue});
   const [responseId, setResponseId] = useState(null);
 
   const setSelectedField = (data) => {
@@ -47,22 +46,15 @@ const FileUpload = (props) => {
   }
 
   const handleGetAI = async (filename) => {
+    console.log('filename',filename)
       try {
           // We will send formData object as a data to the API URL here.
           const response = await axios.put(`/getAI`,{
             data:{
-              version: "922c7bb67b87ec32cbc2fd11b1d5f94f0ba4f5519c4dbd02856376444127cc60",
+              version: "9222a21c181b707209ef12b5e0d7e94c994b58f01c7b2fec075d2e892362f13c",
               input:{
                 image: filename,
-                prompt: selectedFile.prompt,
-                num_samples: "1",
-                image_resolution: "512",
-                ddim_steps: 20,
-                scale: 9,
-                eta: 0,
-                a_prompt: selectedFile.a_prompt,
-                n_prompt: "3D, longbody, lowres, bad anatomy, bad hands, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality",
-                detect_resolution: 512,
+                target_age: selectedFile.age,
               }
             }
           })
@@ -101,12 +93,8 @@ const FileUpload = (props) => {
   return (
       <form className='upload' onSubmit={handleSubmit}>
         <div style={{width:'80vw',display:'flex'}}>
-            <p style={{whiteSpace: 'nowrap'}}>輸入關鍵字：</p>
-            <input type="text" defaultValue={defaultValue} onChange={e => setSelectedField({prompt: e.target.value})}></input>
-        </div>
-        <div style={{width:'80vw',display:'flex'}}>
-            <p style={{whiteSpace: 'nowrap'}}>輸入參數：</p>
-            <input type="text" defaultValue={defaultA_prompt} onChange={e => setSelectedField({a_prompt: e.target.value})}></input>
+            <p style={{whiteSpace: 'nowrap'}}>輸入年齡：</p>
+            <input type="text" defaultValue={defaultValue} onChange={e => setSelectedField({age: e.target.value})}></input>
         </div>
         <div style={{width:'80vw',display:'flex'}}>
           <input type="file" onChange={e => setSelectedField({input: e.target.files[0]})}/>
@@ -125,14 +113,13 @@ function LiffPage() {
 
   return (
     <main className='first-page'> 
-      <h1>??轉換器</h1>
-      <p>若狀態為Starting則須等待3~5分鐘</p>
+      <h1>年齡轉換器</h1>
       <div className='showcase'>
         {preview.input ?  <img src={preview.input} /> : '請上傳圖片'}
       </div>
       <FileUpload setPreview={setPreviewField} />
       <div className='showcase'>
-        {preview.output ?  <img src={preview.output[1]} /> : preview.status}
+        {preview.output ?  <img src={preview.output} /> : preview.status}
       </div>
     </main>
   );

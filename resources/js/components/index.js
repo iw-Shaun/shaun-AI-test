@@ -5,6 +5,7 @@ import queryString from 'query-string';
 import { LiffProvider, LiffContext } from "./hooks/liff-context";
 import trackingHandler from './hooks/trackingHandler';
 import FirstPage from './pages/FirstPage'
+import agePage from './pages/agePage'
 
 let parsedQueryString = {};
 
@@ -158,10 +159,19 @@ function LiffRoot(props) {
 
   return (
     <>
-        <Switch>
-            <Route path='/' exact component={FirstPage} />
-        </Switch>
-        <Route path="/" render={trackingPageView} />
+      <div style={{position:'relative',top:'0vw',width:'100vw',height:'20vw',display:'flex',alignItems:'center',justifyContent:'center'}}>
+        <div style={{width:'30vw',height:'20vw',display:'flex',alignItems:'center',justifyContent:'center'}}>
+          <Link to={'/'}>圖片繪圖</Link>
+        </div>
+        <div style={{width:'30vw',height:'20vw',display:'flex',alignItems:'center',justifyContent:'center'}}>
+          <Link to={'/age'}>年齡轉換</Link>
+        </div>
+      </div>
+      <Switch>
+          <Route path='/' exact component={FirstPage} />
+          <Route path='/age' exact component={agePage} />
+      </Switch>
+      <Route path="/" render={trackingPageView} />
     </>
   )
 }
